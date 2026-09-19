@@ -20,7 +20,7 @@
 <div id="tela-rank" class="hidden max-w-3xl mx-auto p-4"><h1 class="font-extrabold text-2xl">🏆 Mais bem avaliados</h1><div id="lista-rank" class="mt-4 space-y-3"></div><button onclick="irInicio()" class="w-full bg-black text-white py-3 rounded-xl mt-6 font-bold">Voltar</button></div>
 <div id="tela-empresa" class="hidden max-w-2xl mx-auto p-4"><div class="bg-white rounded-[28px] overflow-hidden shadow"><div id="e-foto" class="h-80 bg-gray-200 bg-cover bg-center"></div><div class="p-6"><h1 id="e-nome" class="text-3xl font-extrabold"></h1><p id="e-cat" class="bg-black text-white inline-block px-3 py-1 rounded-full text-xs mt-2"></p><p id="e-cnpj" class="text-xs text-gray-500 mt-2"></p><div class="flex gap-3 mt-2 text-sm"><span id="e-tel"></span><span id="e-email"></span></div><p id="e-desc" class="mt-4 text-gray-600"></p><div id="e-fotos" class="grid grid-cols-3 gap-2 mt-4"></div><div class="mt-8 border-t pt-6"><h3 class="font-bold">Avaliações <span id="e-media" class="bg-yellow-400 px-2 py-1 rounded-full text-sm"></span></h3><div id="e-avs" class="mt-3 space-y-2"></div><div class="mt-4 bg-gray-50 p-4 rounded-2xl"><div id="stars" class="flex gap-1 text-3xl mt-1 cursor-pointer"><span data-s="1">☆</span><span data-s="2">☆</span><span data-s="3">☆</span><span data-s="4">☆</span><span data-s="5">☆</span></div><textarea id="e-com" placeholder="Sua experiência..." class="w-full border p-3 rounded-xl mt-2"></textarea><button id="btn-avaliar" class="w-full bg-black text-white py-3 rounded-xl font-bold mt-2">Enviar avaliação</button></div></div><button onclick="irInicio()" class="w-full bg-gray-100 py-3 rounded-xl font-bold mt-6">Voltar</button></div></div></div>
 
-<div id="tela-admin" class="hidden max-w-xl mx-auto p-4"><div class="bg-white rounded-[28px] p-6 shadow"><h2 class="font-extrabold text-xl">Cadastro - Online</h2><input id="c-nome" placeholder="Nome da empresa *" class="w-full border p-3 rounded-xl mt-4"><input id="c-cnpj" placeholder="CNPJ *" class="w-full border p-3 rounded-xl mt-2"><p id="cnpj-msg" class="text-xs mt-1 hidden"></p><select id="c-cat" class="w-full border p-3 rounded-xl mt-2"><option>Venda de Serviços</option><option>Culinária</option><option>Beleza</option><option>Maquiagem</option><option>Estética Automotiva</option><option>Loja</option><option>Outros</option></select><input id="c-tel" placeholder="Telefone" class="w-full border p-3 rounded-xl mt-2"><input id="c-email" placeholder="Email" class="w-full border p-3 rounded-xl mt-2"><textarea id="c-desc" placeholder="Descrição" class="w-full border p-3 rounded-xl mt-2"></textarea><input id="c-fotos" type="file" multiple accept="image/*" class="w-full border p-3 rounded-xl mt-2 bg-gray-50"><div id="preview" class="flex gap-2 mt-2"></div><button id="btn-cadastrar" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold mt-4">Cadastrar e Gerar QR</button><div id="admin-lista" class="mt-8"></div></div></div>
+<div id="tela-admin" class="hidden max-w-xl mx-auto p-4"><div class="bg-white rounded-[28px] p-6 shadow"><h2 class="font-extrabold text-xl">Cadastro - Online</h2><input id="c-nome" placeholder="Nome da empresa *" class="w-full border p-3 rounded-xl mt-4"><input id="c-cnpj" placeholder="CNPJ *" class="w-full border p-3 rounded-xl mt-2"><p id="cnpj-msg" class="text-xs mt-1 hidden"></p><select id="c-cat" class="w-full border p-3 rounded-xl mt-2"><option>Venda de Serviços</option><option>Culinária</option><option>Beleza</option><option>Maquiagem</option><option>Estética Automotiva</option><option>Loja</option><option>Outros</option></select><input id="c-tel" placeholder="Telefone" class="w-full border p-3 rounded-xl mt-2"><input id="c-email" placeholder="Email" class="w-full border p-3 rounded-xl mt-2"><textarea id="c-desc" placeholder="Descrição" class="w-full border p-3 rounded-xl mt-2"></textarea><input id="c-fotos" type="file" multiple accept="image/*" class="w-full border p-3 rounded-xl mt-2 bg-gray-50"><div id="preview" class="flex gap-2 mt-2"></div><p class="text-[10px] text-gray-400 mt-1">As fotos serão comprimidas automaticamente para caber online.</p><button id="btn-cadastrar" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold mt-4">Cadastrar e Gerar QR</button><div id="admin-lista" class="mt-8"></div></div></div>
 
 <div id="modal-senha" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-[60]"><div class="bg-white p-6 rounded-3xl w-full max-w-sm text-center"><h3 class="font-bold">Acesso Restrito</h3><input id="senha" type="password" placeholder="Digite sua senha" class="w-full border p-3 rounded-xl mt-3 text-center"><button id="btn-entrar" class="w-full bg-black text-white py-3 rounded-xl mt-3 font-bold">Entrar</button><button onclick="document.getElementById('modal-senha').classList.add('hidden')" class="w-full bg-gray-100 py-2 rounded-xl mt-2">Cancelar</button></div></div>
 <div id="modal-qr" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-[60]"><div class="bg-white p-6 rounded-3xl w-full max-w-sm text-center"><p id="qr-nome" class="font-bold text-lg"></p><div id="qrcode" class="flex justify-center border p-3 rounded-2xl mt-3 bg-white"></div><p class="text-xs text-green-600 font-bold mt-2">✅ QR ONLINE - funciona em qualquer celular</p><p id="qr-link" class="text-[10px] text-gray-400 break-all mt-2"></p><button onclick="document.getElementById('modal-qr').classList.add('hidden')" class="w-full bg-black text-white py-3 rounded-xl mt-4 font-bold">Fechar</button></div></div>
@@ -48,8 +48,35 @@ const SENHA_DONO='102030';
 
 function validarCNPJ(cnpj){cnpj=cnpj.replace(/[^\d]+/g,'');if(cnpj.length!=14)return false;if(/^(\d)\1{13}$/.test(cnpj))return false;let t=cnpj.length-2,d=cnpj.substring(t),d1=parseInt(d.charAt(0)),d2=parseInt(d.charAt(1)),calc=x=>{let n=cnpj.substring(0,x),y=0,pos=x-7;for(let i=x;i>=1;i--){y+=n.charAt(x-i)*pos--;if(pos<2)pos=9;}return(y%11<2)?0:11-(y%11);};return calc(t)==d1&&calc(t+1)==d2;}
 
+function comprimirImagem(base64){
+  return new Promise(res=>{
+    let img=new Image();
+    img.onload=()=>{
+      let canvas=document.createElement('canvas');
+      let max=600;
+      let w=img.width, h=img.height;
+      if(w>max){h=h*(max/w); w=max;}
+      if(h>max){w=w*(max/h); h=max;}
+      canvas.width=w; canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      res(canvas.toDataURL('image/jpeg',0.6));
+    };
+    img.src=base64;
+  });
+}
+
 $('c-cnpj').addEventListener('input',e=>{let v=e.target.value,m=$('cnpj-msg');if(v.length>10){if(validarCNPJ(v)){m.className='text-xs mt-1 text-green-600';m.innerText='✅ CNPJ válido';}else{m.className='text-xs mt-1 text-red-600';m.innerText='❌ CNPJ inválido';}m.classList.remove('hidden');}else m.classList.add('hidden');});
-$('c-fotos').addEventListener('change',e=>{fotosTemp=[];$('preview').innerHTML='';[...e.target.files].slice(0,3).forEach(f=>{let r=new FileReader();r.onload=ev=>{fotosTemp.push(ev.target.result);$('preview').innerHTML+=`<img src="${ev.target.result}" class="w-16 h-16 rounded-xl object-cover">`;};r.readAsDataURL(f);});});
+
+$('c-fotos').addEventListener('change',async e=>{
+  fotosTemp=[]; $('preview').innerHTML=' Salvando preview...';
+  let files=[...e.target.files].slice(0,3);
+  for(let f of files){
+    let r=await new Promise(r2=>{let rd=new FileReader(); rd.onload=ev=>r2(ev.target.result); rd.readAsDataURL(f);});
+    let comprimida=await comprimirImagem(r);
+    fotosTemp.push(comprimida);
+  }
+  $('preview').innerHTML=fotosTemp.map(src=>`<img src="${src}" class="w-16 h-16 rounded-xl object-cover">`).join('');
+});
 
 function show(id){['tela-inicio','tela-empresa','tela-admin','tela-rank'].forEach(t=>$(t).classList.add('hidden'));$(id).classList.remove('hidden');window.scrollTo(0,0);}
 window.irInicio=function(){show('tela-inicio');history.replaceState(null,'',location.pathname);renderInicio();}
@@ -63,20 +90,16 @@ async function loadEmpresas(){
     empresas = snap.docs.map(d=>({id:d.id,...d.data()}));
     $('loading').innerText = empresas.length? `${empresas.length} empresas online` : 'Nenhuma empresa ainda';
     renderInicio();
-    // Se veio com?id= na URL, já mostra
     let params = new URLSearchParams(location.search);
     let id = params.get('id');
-    let p = params.get('d');
     if(id){
       let emp = empresas.find(x=>x.id==id);
-      if(!emp){ // tenta buscar direto do banco
+      if(!emp){
         const docRef = await getDoc(doc(db,"empresas",id));
         if(docRef.exists()) mostrar({id:docRef.id,...docRef.data()});
       } else mostrar(emp);
-    } else if(p){
-      try{let emp=JSON.parse(decodeURIComponent(atob(p)));mostrar(emp);}catch(e){}
     }
-  }catch(e){console.error(e);$('loading').innerText='Erro ao carregar: '+e.message;}
+  }catch(e){$('loading').innerText='Erro: '+e.message;}
 }
 
 window.cadastrar=async function(){
@@ -110,42 +133,4 @@ window.abrirQRById=function(id){let e=empresas.find(x=>x.id==id);if(e)abrirQR(e)
 
 function renderInicio(){$('lista').innerHTML=empresas.map(e=>{let media=e.avs.length?(e.avs.reduce((s,a)=>s+a.nota,0)/e.avs.length).toFixed(1):'Novo';return `<div class="bg-white p-4 rounded-2xl shadow-sm"><div class="h-36 bg-gray-100 rounded-xl bg-cover bg-center" style="background-image:url(${e.fotos[0]||''})"></div><b class="block mt-2">${e.nome}</b><p class="text-xs text-gray-500">${e.cnpj}</p><div class="flex justify-between items-center mt-1"><span class="text-xs bg-black text-white px-2 py-1 rounded-full">${e.cat}</span><span class="text-xs bg-yellow-100 px-2 py-1 rounded-full">⭐ ${media}</span></div><button onclick="ver('${e.id}')" class="w-full mt-3 bg-black text-white py-2 rounded-full text-sm font-bold">Ver página</button></div>`;}).join('')||'<p class="text-center text-gray-400 py-8">Nenhuma empresa ainda</p>';}
 window.ver=function(id){let emp=empresas.find(x=>x.id==id);if(emp)mostrar(emp);}
-window.mostrar=function(emp){ativa=emp;$('e-nome').innerText=emp.nome;$('e-cnpj').innerText='CNPJ: '+emp.cnpj;$('e-cat').innerText=emp.cat;$('e-tel').innerText=emp.tel? '📱 '+emp.tel : '';$('e-email').innerText=emp.email? '✉️ '+emp.email : '';$('e-desc').innerText=emp.desc||'';$('e-foto').style.backgroundImage=emp.fotos[0]?`url(${emp.fotos[0]})`:'';$('e-fotos').innerHTML=emp.fotos.map(f=>`<img src="${f}" class="w-full h-24 object-cover rounded-xl">`).join('');let media=emp.avs.length?(emp.avs.reduce((s,a)=>s+a.nota,0)/emp.avs.length).toFixed(1):'0.0';$('e-media').innerText='⭐ '+media+' ('+emp.avs.length+')';$('e-avs').innerHTML=emp.avs.map(a=>`<div class="bg-white p-3 rounded-xl border"><b class="text-sm">⭐ ${a.nota}</b><p class="text-sm text-gray-600">${a.texto}</p></div>`).join('')||'<p class="text-sm text-gray-400">Sem avaliações</p>';show('tela-empresa');estrela=0;document.querySelectorAll('#stars span').forEach(el=>{el.innerText='☆';el.className='text-gray-300';});$('e-com').value='';}
-
-window.avaliar=async function(){
-  if(!estrela)return alert('Escolha as estrelas');
-  let texto=$('e-com').value.trim();if(!texto)return alert('Escreva algo');
-  $('btn-avaliar').innerText='Enviando...'; $('btn-avaliar').disabled=true;
-  try{
-    let novoAv={nota:estrela,texto,data:Date.now()};
-    let ref = doc(db,"empresas",ativa.id);
-    let snap = await getDoc(ref);
-    let avsAtuais = snap.data().avs || [];
-    avsAtuais.push(novoAv);
-    await updateDoc(ref,{avs:avsAtuais});
-    // atualiza local
-    let emp = empresas.find(x=>x.id==ativa.id);
-    if(emp) emp.avs = avsAtuais;
-    ativa.avs = avsAtuais;
-    mostrar(ativa);
-    alert('Avaliação enviada e salva online!');
-  }catch(e){alert('Erro: '+e.message);}
-  $('btn-avaliar').innerText='Enviar avaliação'; $('btn-avaliar').disabled=false;
-}
-
-window.renderAdmin=function(){$('admin-lista').innerHTML='<h3 class="font-bold">Cadastradas online:</h3>'+empresas.map(e=>`<div class="border p-3 rounded-xl flex justify-between mt-2 items-center"><div><b>${e.nome}</b><br><span class="text-xs">${e.cnpj}</span></div><button onclick="abrirQRById('${e.id}')" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">QR</button></div>`).join('');}
-window.renderRank=function(){let ord=[...empresas].map(e=>{let m=e.avs.length?e.avs.reduce((s,a)=>s+a.nota,0)/e.avs.length:0;return{...e,media:m};}).sort((a,b)=>b.media-a.media);$('lista-rank').innerHTML=ord.map((e,i)=>`<div class="bg-white p-4 rounded-2xl flex gap-3 items-center"><div class="text-xl font-extrabold">${i==0?'🥇':i==1?'🥈':i==2?'🥉':'#'+(i+1)}</div><img src="${e.fotos[0]||''}" class="w-16 h-16 rounded-xl object-cover bg-gray-100"><div class="flex-1"><b>${e.nome}</b><br><span class="text-xs">${e.cat} - ⭐ ${e.media.toFixed(1)} (${e.avs.length})</span></div><button onclick="ver('${e.id}')" class="bg-black text-white px-3 py-1 rounded-full text-xs">Ver</button></div>`).join('')||'<p class="text-gray-400">Nenhuma avaliação</p>';}
-
-document.addEventListener('DOMContentLoaded',()=>{
- $('btn-emp').addEventListener('click',irInicio);
- $('btn-rank').addEventListener('click',irRank);
- $('btn-cad').addEventListener('click',abrirAdmin);
- $('btn-entrar').addEventListener('click',checkSenha);
- $('btn-cadastrar').addEventListener('click',cadastrar);
- $('btn-avaliar').addEventListener('click',avaliar);
- document.querySelectorAll('#stars span').forEach(s=>{s.addEventListener('click',()=>{estrela=parseInt(s.dataset.s);document.querySelectorAll('#stars span').forEach((el,i)=>{el.innerText=i<estrela?'★':'☆';el.className=i<estrela?'text-yellow-500':'text-gray-300';});});});
- loadEmpresas();
-});
-</script>
-</body>
-</html>
+window.mostrar=function(emp){ativa=emp;$('e-nome').innerText=emp.nome;$('e-cnpj').innerText='CNPJ: '+emp.cnpj;$('e-cat').innerText=emp.cat;$('e-tel').innerText=emp.tel? '📱 '+emp.tel : '';$('e-email').innerText=emp.email? '✉️ '+emp.email : '';$('e-desc').innerText=emp.desc||'';$('e-foto').style.backgroundImage=emp.fotos[0]?`url(${emp.fotos[0]})`:'';$('e-fotos').innerHTML=emp.fotos.map(f=>`<img src="${f}" class="w-full h-24 object-cover rounded-xl">`).join('');let media=emp.avs.length?(emp.avs.reduce((s,a)=>s+a.nota,0)/emp.avs.length).toFixed(1):'0.0';$('e-media').innerText='⭐ '+media+'

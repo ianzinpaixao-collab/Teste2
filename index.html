@@ -1,43 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AvaliaMais V1.1</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#f5f5f7]">
+<nav class="bg-black text-white p-4 flex justify-between items-center sticky top-0 z-50">
+<div onclick="irInicio()" class="font-extrabold text-xl cursor-pointer">avalia<span class="text-blue-500">Mais</span></div>
+<div class="flex gap-2">
+<button id="btn-emp" class="bg-white/20 px-4 py-2 rounded-full text-sm font-bold">Empresas</button>
+<button id="btn-rank" class="bg-yellow-500 text-black px-4 py-2 rounded-full text-sm font-bold">🏆 Rank</button>
+<button id="btn-cad" class="bg-blue-600 px-4 py-2 rounded-full text-sm font-bold">🔒 Cadastrar</button>
+</div>
+</nav>
+<div id="tela-inicio" class="max-w-5xl mx-auto p-4"><h1 class="font-extrabold text-2xl mt-2">Empresas</h1><div id="lista" class="grid md:grid-cols-3 gap-4 mt-4"></div></div>
+<div id="tela-rank" class="hidden max-w-3xl mx-auto p-4"><h1 class="font-extrabold text-2xl">🏆 Mais bem avaliados</h1><div id="lista-rank" class="mt-4 space-y-3"></div><button onclick="irInicio()" class="w-full bg-black text-white py-3 rounded-xl mt-6 font-bold">Voltar</button></div>
+<div id="tela-empresa" class="hidden max-w-2xl mx-auto p-4"><div class="bg-white rounded-[28px] overflow-hidden shadow"><div id="e-foto" class="h-80 bg-gray-200 bg-cover bg-center"></div><div class="p-6"><h1 id="e-nome" class="text-3xl font-extrabold"></h1><p id="e-cat" class="bg-black text-white inline-block px-3 py-1 rounded-full text-xs mt-2"></p><p id="e-cnpj" class="text-xs text-gray-500 mt-2"></p><div class="flex gap-3 mt-2 text-sm"><span id="e-tel"></span><span id="e-email"></span></div><p id="e-desc" class="mt-4 text-gray-600"></p><div id="e-fotos" class="grid grid-cols-3 gap-2 mt-4"></div><div class="mt-8 border-t pt-6"><h3 class="font-bold">Avaliações <span id="e-media" class="bg-yellow-400 px-2 py-1 rounded-full text-sm"></span></h3><div id="e-avs" class="mt-3 space-y-2"></div><div class="mt-4 bg-gray-50 p-4 rounded-2xl"><div id="stars" class="flex gap-1 text-3xl mt-1 cursor-pointer"><span data-s="1">☆</span><span data-s="2">☆</span><span data-s="3">☆</span><span data-s="4">☆</span><span data-s="5">☆</span></div><textarea id="e-com" placeholder="Sua experiência..." class="w-full border p-3 rounded-xl mt-2"></textarea><button id="btn-avaliar" class="w-full bg-black text-white py-3 rounded-xl font-bold mt-2">Enviar avaliação</button></div></div><button onclick="irInicio()" class="w-full bg-gray-100 py-3 rounded-xl font-bold mt-6">Voltar</button></div></div></div>
+<div id="tela-admin" class="hidden max-w-xl mx-auto p-4"><div class="bg-white rounded-[28px] p-6 shadow"><h2 class="font-extrabold text-xl">Cadastro - Privado</h2><input id="c-nome" placeholder="Nome da empresa *" class="w-full border p-3 rounded-xl mt-4"><input id="c-cnpj" placeholder="CNPJ *" class="w-full border p-3 rounded-xl mt-2"><p id="cnpj-msg" class="text-xs mt-1 hidden"></p><select id="c-cat" class="w-full border p-3 rounded-xl mt-2"><option>Venda de Serviços</option><option>Culinária</option><option>Beleza</option><option>Maquiagem</option><option>Estética Automotiva</option><option>Loja</option><option>Outros</option></select><input id="c-tel" placeholder="Telefone" class="w-full border p-3 rounded-xl mt-2"><input id="c-email" placeholder="Email" class="w-full border p-3 rounded-xl mt-2"><textarea id="c-desc" placeholder="Descrição" class="w-full border p-3 rounded-xl mt-2"></textarea><input id="c-fotos" type="file" multiple accept="image/*" class="w-full border p-3 rounded-xl mt-2 bg-gray-50"><div id="preview" class="flex gap-2 mt-2"></div><button id="btn-cadastrar" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold mt-4">Cadastrar e Gerar QR</button><div id="admin-lista" class="mt-8"></div></div></div>
+<div id="modal-senha" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-[60]"><div class="bg-white p-6 rounded-3xl w-full max-w-sm text-center"><h3 class="font-bold">Acesso Restrito</h3><p class="text-xs text-gray-500 mt-1">Área do administrador</p><input id="senha" type="password" placeholder="Digite sua senha" class="w-full border p-3 rounded-xl mt-3 text-center"><button id="btn-entrar" class="w-full bg-black text-white py-3 rounded-xl mt-3 font-bold">Entrar</button><button onclick="document.getElementById('modal-senha').classList.add('hidden')" class="w-full bg-gray-100 py-2 rounded-xl mt-2">Cancelar</button></div></div>
+<div id="modal-qr" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-[60]"><div class="bg-white p-6 rounded-3xl w-full max-w-sm text-center"><p id="qr-nome" class="font-bold text-lg"></p><div id="qrcode" class="flex justify-center border p-3 rounded-2xl mt-3 bg-white"></div><p class="text-xs text-green-600 font-bold mt-2">QR cai direto na empresa</p><p id="qr-link" class="text-[10px] text-gray-400 break-all mt-2"></p><button onclick="document.getElementById('modal-qr').classList.add('hidden')" class="w-full bg-black text-white py-3 rounded-xl mt-4 font-bold">Fechar</button></div></div>
 <script>
+let empresas = JSON.parse(localStorage.getItem('am_v1_final')||'[]');
+let fotosTemp=[], ativa=null, estrela=0;
+const $=id=>document.getElementById(id);
+const SENHA_DONO='102030';
+function validarCNPJ(cnpj){cnpj=cnpj.replace(/[^\d]+/g,'');if(cnpj.length!=14)return false;if(/^(\d)\1{13}$/.test(cnpj))return false;let t=cnpj.length-2,d=cnpj.substring(t),d1=parseInt(d.charAt(0)),d2=parseInt(d.charAt(1)),calc=x=>{let n=cnpj.substring(0,x),y=0,pos=x-7;for(let i=x;i>=1;i--){y+=n.charAt(x-i)*pos--;if(pos<2)pos=9;}return(y%11<2)?0:11-(y%11);};return calc(t)==d1&&calc(t+1)==d2;}
+$('c-cnpj').addEventListener('input',e=>{let v=e.target.value,m=$('cnpj-msg');if(v.length>10){if(validarCNPJ(v)){m.className='text-xs mt-1 text-green-600';m.innerText='✅ CNPJ válido';}else{m.className='text-xs mt-1 text-red-600';m.innerText='❌ CNPJ inválido';}m.classList.remove('hidden');}else m.classList.add('hidden');});
+$('c-fotos').addEventListener('change',e=>{fotosTemp=[];$('preview').innerHTML='';[...e.target.files].slice(0,3).forEach(f=>{let r=new FileReader();r.onload=ev=>{fotosTemp.push(ev.target.result);$('preview').innerHTML+=`<img src="${ev.target.result}" class="w-16 h-16 rounded-xl object-cover">`;};r.readAsDataURL(f);});});
+function save(){localStorage.setItem('am_v1_final',JSON.stringify(empresas));}
+function show(id){['tela-inicio','tela-empresa','tela-admin','tela-rank'].forEach(t=>$(t).classList.add('hidden'));$(id).classList.remove('hidden');window.scrollTo(0,0);}
+function irInicio(){show('tela-inicio');history.replaceState(null,'',location.pathname);renderInicio();}
+function irRank(){show('tela-rank');renderRank();}
+function abrirAdmin(){$('modal-senha').classList.remove('hidden');}
+function checkSenha(){if($('senha').value===SENHA_DONO){$('modal-senha').classList.add('hidden');$('senha').value='';show('tela-admin');renderAdmin();}else alert('Senha incorreta!');}
 function cadastrar(){
   let nome=$('c-nome').value.trim(),cnpj=$('c-cnpj').value.trim(),cat=$('c-cat').value,tel=$('c-tel').value.trim(),email=$('c-email').value.trim(),desc=$('c-desc').value.trim();
   if(!nome)return alert('Nome obrigatório');
   if(!validarCNPJ(cnpj))return alert('CNPJ inválido!');
-  // BLOQUEIA CNPJ REPETIDO
-  let cnpjLimpo = cnpj.replace(/\D/g,'');
-  if(empresas.some(e=> e.cnpj.replace(/\D/g,'') === cnpjLimpo )){
-    return alert('❌ Esse CNPJ já foi cadastrado!');
-  }
+  let cnpjLimpo=cnpj.replace(/\D/g,'');
+  if(empresas.some(e=>e.cnpj.replace(/\D/g,'')===cnpjLimpo)){return alert('❌ Esse CNPJ já foi cadastrado!');}
   if(fotosTemp.length==0)return alert('Coloque 1 foto');
   let emp={id:Date.now().toString(),nome,cnpj,cat,tel,email,desc,fotos:fotosTemp,avs:[]};
   empresas.push(emp);save();
   $('c-nome').value='';$('c-cnpj').value='';$('c-tel').value='';$('c-email').value='';$('c-desc').value='';$('preview').innerHTML='';fotosTemp=[];$('cnpj-msg').classList.add('hidden');
   renderAdmin();renderInicio();
-  // GERA QR NA HORA - CORRIGIDO
   abrirQR(emp);
 }
 function abrirQR(emp){
   $('qr-nome').innerText=emp.nome;
   let qrDiv=$('qrcode');qrDiv.innerHTML='';
-  // AGORA LINK CURTO - SÓ ID - NUNCA FALHA
   let link=location.origin+location.pathname+'?id='+emp.id;
+  $('qr-link').innerText=link;
   new QRCode(qrDiv,{text:link,width:220,height:220,correctLevel:QRCode.CorrectLevel.H});
   $('modal-qr').classList.remove('hidden');
 }
-// NOVO: LER TANTO ?d= QUANTO ?id=
+function abrirQRById(id){let e=empresas.find(x=>x.id==id);if(e)abrirQR(e);}
+function renderInicio(){$('lista').innerHTML=empresas.map(e=>{let media=e.avs.length?(e.avs.reduce((s,a)=>s+a.nota,0)/e.avs.length).toFixed(1):'Novo';return `<div class="bg-white p-4 rounded-2xl shadow-sm"><div class="h-36 bg-gray-100 rounded-xl bg-cover bg-center" style="background-image:url(${e.fotos[0]||''})"></div><b class="block mt-2">${e.nome}</b><p class="text-xs text-gray-500">${e.cnpj}</p><div class="flex justify-between items-center mt-1"><span class="text-xs bg-black text-white px-2 py-1 rounded-full">${e.cat}</span><span class="text-xs bg-yellow-100 px-2 py-1 rounded-full">⭐ ${media}</span></div><button onclick="ver('${e.id}')" class="w-full mt-3 bg-black text-white py-2 rounded-full text-sm font-bold">Ver página</button></div>`;}).join('')||'<p class="text-center text-gray-400 py-16">Nenhuma empresa. Clique em 🔒 Cadastrar</p>';}
+function ver(id){let emp=empresas.find(x=>x.id==id);if(emp)mostrar(emp);}
+function mostrar(emp){ativa=emp;$('e-nome').innerText=emp.nome;$('e-cnpj').innerText='CNPJ: '+emp.cnpj;$('e-cat').innerText=emp.cat;$('e-tel').innerText=emp.tel? '📱 '+emp.tel : '';$('e-email').innerText=emp.email? '✉️ '+emp.email : '';$('e-desc').innerText=emp.desc||'';$('e-foto').style.backgroundImage=emp.fotos[0]?`url(${emp.fotos[0]})`:'';$('e-fotos').innerHTML=emp.fotos.map(f=>`<img src="${f}" class="w-full h-24 object-cover rounded-xl">`).join('');let media=emp.avs.length?(emp.avs.reduce((s,a)=>s+a.nota,0)/emp.avs.length).toFixed(1):'0.0';$('e-media').innerText='⭐ '+media+' ('+emp.avs.length+')';$('e-avs').innerHTML=emp.avs.map(a=>`<div class="bg-white p-3 rounded-xl border"><b class="text-sm">⭐ ${a.nota}</b><p class="text-sm text-gray-600">${a.texto}</p></div>`).join('')||'<p class="text-sm text-gray-400">Sem avaliações</p>';show('tela-empresa');estrela=0;document.querySelectorAll('#stars span').forEach(el=>{el.innerText='☆';el.className='text-gray-300';});$('e-com').value='';}
+function avaliar(){if(!estrela)return alert('Escolha as estrelas');let texto=$('e-com').value.trim();if(!texto)return alert('Escreva algo');let emp=empresas.find(x=>x.id==ativa.id);emp.avs.push({nota:estrela,texto,data:Date.now()});ativa.avs=emp.avs;save();mostrar(ativa);alert('Avaliação enviada!');}
+function renderAdmin(){$('admin-lista').innerHTML='<h3 class="font-bold">Cadastradas:</h3>'+empresas.map(e=>`<div class="border p-3 rounded-xl flex justify-between mt-2 items-center"><div><b>${e.nome}</b><br><span class="text-xs">${e.cnpj}</span></div><button onclick="abrirQRById('${e.id}')" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">QR</button></div>`).join('');}
+function renderRank(){let ord=[...empresas].map(e=>{let m=e.avs.length?e.avs.reduce((s,a)=>s+a.nota,0)/e.avs.length:0;return{...e,media:m};}).sort((a,b)=>b.media-a.media);$('lista-rank').innerHTML=ord.map((e,i)=>`<div class="bg-white p-4 rounded-2xl flex gap-3 items-center"><div class="text-xl font-extrabold">${i==0?'🥇':i==1?'🥈':i==2?'🥉':'#'+(i+1)}</div><img src="${e.fotos[0]||''}" class="w-16 h-16 rounded-xl object-cover bg-gray-100"><div class="flex-1"><b>${e.nome}</b><br><span class="text-xs">${e.cat} - ⭐ ${e.media.toFixed(1)} (${e.avs.length})</span></div><button onclick="ver('${e.id}')" class="bg-black text-white px-3 py-1 rounded-full text-xs">Ver</button></div>`).join('')||'<p class="text-gray-400">Nenhuma avaliação</p>';}
 document.addEventListener('DOMContentLoaded',()=>{
-  $('btn-emp').addEventListener('click',irInicio);
-  $('btn-rank').addEventListener('click',irRank);
-  $('btn-cad').addEventListener('click',abrirAdmin);
-  $('btn-entrar').addEventListener('click',checkSenha);
-  $('btn-cadastrar').addEventListener('click',cadastrar);
-  $('btn-avaliar').addEventListener('click',avaliar);
-  document.querySelectorAll('#stars span').forEach(s=>{s.addEventListener('click',()=>{estrela=parseInt(s.dataset.s);document.querySelectorAll('#stars span').forEach((el,i)=>{el.innerText=i<estrela?'★':'☆';el.className=i<estrela?'text-yellow-500':'text-gray-300';});});});
-  let params = new URLSearchParams(location.search);
-  let p = params.get('d');
-  let id = params.get('id');
-  if(p){try{let emp=JSON.parse(decodeURIComponent(atob(p)));mostrar(emp);return;}catch(e){}}
-  if(id){let emp=empresas.find(x=>x.id==id); if(emp){mostrar(emp);return;}}
-  renderInicio();
+ $('btn-emp').addEventListener('click',irInicio);
+ $('btn-rank').addEventListener('click',irRank);
+ $('btn-cad').addEventListener('click',abrirAdmin);
+ $('btn-entrar').addEventListener('click',checkSenha);
+ $('btn-cadastrar').addEventListener('click',cadastrar);
+ $('btn-avaliar').addEventListener('click',avaliar);
+ document.querySelectorAll('#stars span').forEach(s=>{s.addEventListener('click',()=>{estrela=parseInt(s.dataset.s);document.querySelectorAll('#stars span').forEach((el,i)=>{el.innerText=i<estrela?'★':'☆';el.className=i<estrela?'text-yellow-500':'text-gray-300';});});});
+ let params=new URLSearchParams(location.search);
+ let p=params.get('d'); let id=params.get('id');
+ if(p){try{let emp=JSON.parse(decodeURIComponent(atob(p)));mostrar(emp);return;}catch(e){}}
+ if(id){let emp=empresas.find(x=>x.id==id); if(emp){mostrar(emp);return;}}
+ renderInicio();
 });
 </script>
+</body>
+</html>

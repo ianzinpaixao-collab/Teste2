@@ -1,34 +1,63 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AvaliaMais - ONLINE</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top Cinco - Itapecuru</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
+body{background:#f5f5f7;color:#111}
+header{background:#0f0f0f;color:#fff;padding:14px 18px;display:flex;gap:10px;align-items:center;position:sticky;top:0;z-index:20;flex-wrap:wrap}
+.logo{font-weight:900;font-size:22px;margin-right:10px}
+.logo span{color:#f7c600}
+.btn{border:0;padding:10px 16px;border-radius:999px;font-weight:700;cursor:pointer}
+.btn-dark{background:#2a2a2a;color:#fff}
+.btn-yellow{background:#f7c600;color:#111}
+.btn-blue{background:#2b7bff;color:#fff}
+main{padding:18px;max-width:950px;margin:auto}
+.card{background:#fff;border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.muted{color:#666;font-size:14px}
+input,select,textarea{width:100%;padding:13px;border-radius:12px;border:1px solid #ddd;margin-top:6px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+img.thumb{width:100%;height:170px;object-fit:cover;border-radius:12px}
+.badge{display:inline-block;background:#f0f0f0;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600}
+#statusBox{background:#fff;border-radius:12px;padding:14px;margin-bottom:14px;border:1px dashed #ccc}
+</style>
 </head>
-<body class="bg-[#f5f5f7]">
-<nav class="bg-black text-white p-4 flex justify-between items-center sticky top-0 z-50">
-<div onclick="irInicio()" class="font-extrabold text-xl cursor-pointer">avalia<span class="text-blue-500">Mais</span></div>
-<div class="flex gap-2">
-<button id="btn-emp" class="bg-white/20 px-4 py-2 rounded-full text-sm font-bold">Empresas</button>
-<button id="btn-rank" class="bg-yellow-500 text-black px-4 py-2 rounded-full text-sm font-bold">🏆 Rank</button>
-<button id="btn-cad" class="bg-blue-600 px-4 py-2 rounded-full text-sm font-bold">🔒 Cadastrar</button>
+<body>
+<header>
+<div class="logo">Top<span>Cinco</span></div>
+<button class="btn btn-dark" onclick="showTab('empresas')">Empresas</button>
+<button class="btn btn-yellow" onclick="showTab('rank')">🏆 Ranking</button>
+<button class="btn btn-blue" onclick="showTab('cad')">🔒 Cadastrar</button>
+</header>
+<main>
+<div id="tab-empresas">
+<div id="statusBox">⏳ Carregando banco online...</div>
+<div id="lista"></div>
 </div>
-</nav>
-
-<div id="tela-inicio" class="max-w-5xl mx-auto p-4"><h1 class="font-extrabold text-2xl mt-2">Empresas</h1><p id="loading" class="text-sm text-gray-400 mt-2">Carregando banco online...</p><div id="lista" class="grid md:grid-cols-3 gap-4 mt-4"></div></div>
-<div id="tela-rank" class="hidden max-w-3xl mx-auto p-4"><h1 class="font-extrabold text-2xl">🏆 Mais bem avaliados</h1><div id="lista-rank" class="mt-4 space-y-3"></div><button onclick="irInicio()" class="w-full bg-black text-white py-3 rounded-xl mt-6 font-bold">Voltar</button></div>
-<div id="tela-empresa" class="hidden max-w-2xl mx-auto p-4"><div class="bg-white rounded-[28px] overflow-hidden shadow"><div id="e-foto" class="h-80 bg-gray-200 bg-cover bg-center"></div><div class="p-6"><h1 id="e-nome" class="text-3xl font-extrabold"></h1><p id="e-cat" class="bg-black text-white inline-block px-3 py-1 rounded-full text-xs mt-2"></p><p id="e-cnpj" class="text-xs text-gray-500 mt-2"></p><div class="flex gap-3 mt-2 text-sm"><span id="e-tel"></span><span id="e-email"></span></div><p id="e-desc" class="mt-4 text-gray-600"></p><div id="e-fotos" class="grid grid-cols-3 gap-2 mt-4"></div><div class="mt-8 border-t pt-6"><h3 class="font-bold">Avaliações <span id="e-media" class="bg-yellow-400 px-2 py-1 rounded-full text-sm"></span></h3><div id="e-avs" class="mt-3 space-y-2"></div><div class="mt-4 bg-gray-50 p-4 rounded-2xl"><div id="stars" class="flex gap-1 text-3xl mt-1 cursor-pointer"><span data-s="1">☆</span><span data-s="2">☆</span><span data-s="3">☆</span><span data-s="4">☆</span><span data-s="5">☆</span></div><textarea id="e-com" placeholder="Sua experiência..." class="w-full border p-3 rounded-xl mt-2"></textarea><button id="btn-avaliar" class="w-full bg-black text-white py-3 rounded-xl font-bold mt-2">Enviar avaliação</button></div></div><button onclick="irInicio()" class="w-full bg-gray-100 py-3 rounded-xl font-bold mt-6">Voltar</button></div></div></div>
-
-<div id="tela-admin" class="hidden max-w-xl mx-auto p-4"><div class="bg-white rounded-[28px] p-6 shadow"><h2 class="font-extrabold text-xl">Cadastro - Online</h2><input id="c-nome" placeholder="Nome da empresa *" class="w-full border p-3 rounded-xl mt-4"><input id="c-cnpj" placeholder="CNPJ *" class="w-full border p-3 rounded-xl mt-2"><p id="cnpj-msg" class="text-xs mt-1 hidden"></p><select id="c-cat" class="w-full border p-3 rounded-xl mt-2"><option>Venda de Serviços</option><option>Culinária</option><option>Beleza</option><option>Maquiagem</option><option>Estética Automotiva</option><option>Loja</option><option>Outros</option></select><input id="c-tel" placeholder="Telefone" class="w-full border p-3 rounded-xl mt-2"><input id="c-email" placeholder="Email" class="w-full border p-3 rounded-xl mt-2"><textarea id="c-desc" placeholder="Descrição" class="w-full border p-3 rounded-xl mt-2"></textarea><input id="c-fotos" type="file" multiple accept="image/*" class="w-full border p-3 rounded-xl mt-2 bg-gray-50"><div id="preview" class="flex gap-2 mt-2"></div><p class="text-[10px] text-gray-400 mt-1">As fotos serão comprimidas automaticamente para caber online.</p><button id="btn-cadastrar" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold mt-4">Cadastrar e Gerar QR</button><div id="admin-lista" class="mt-8"></div></div></div>
-
-<div id="modal-senha" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-[60]"><div class="bg-white p-6 rounded-3xl w-full max-w-sm text-center"><h3 class="font-bold">Acesso Restrito</h3><input id="senha" type="password" placeholder="Digite sua senha" class="w-full border p-3 rounded-xl mt-3 text-center"><button id="btn-entrar" class="w-full bg-black text-white py-3 rounded-xl mt-3 font-bold">Entrar</button><button onclick="document.getElementById('modal-senha').classList.add('hidden')" class="w-full bg-gray-100 py-2 rounded-xl mt-2">Cancelar</button></div></div>
-<div id="modal-qr" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-[60]"><div class="bg-white p-6 rounded-3xl w-full max-w-sm text-center"><p id="qr-nome" class="font-bold text-lg"></p><div id="qrcode" class="flex justify-center border p-3 rounded-2xl mt-3 bg-white"></div><p class="text-xs text-green-600 font-bold mt-2">✅ QR ONLINE - funciona em qualquer celular</p><p id="qr-link" class="text-[10px] text-gray-400 break-all mt-2"></p><button onclick="document.getElementById('modal-qr').classList.add('hidden')" class="w-full bg-black text-white py-3 rounded-xl mt-4 font-bold">Fechar</button></div></div>
-
+<div id="tab-rank" style="display:none"><h2>🏆 Ranking</h2><div id="rankLista"></div></div>
+<div id="tab-cad" style="display:none">
+<div class="card">
+<h3>Cadastrar empresa</h3>
+<p class="muted">Senha: 102030</p>
+<input id="senha" type="password" placeholder="Senha admin">
+<input id="nome" placeholder="Nome da empresa *">
+<input id="cnpj" placeholder="CNPJ">
+<input id="email" placeholder="E-mail">
+<input id="whats" placeholder="WhatsApp">
+<select id="cat"><option value="">Categoria *</option><option>Venda de Serviços</option><option>Alimentação</option><option>Saúde</option><option>Beleza</option><option>Educação</option><option>Varejo</option><option>Outros</option></select>
+<textarea id="desc" placeholder="Descrição"></textarea>
+<input id="fotos" type="file" multiple accept="image/*">
+<div id="preview" class="grid"></div>
+<button class="btn btn-blue" id="btnSalvar" onclick="salvar()" style="width:100%;margin-top:12px">Salvar empresa</button>
+<p id="saveStatus" class="muted"></p>
+</div>
+</div>
+</main>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyAxAzMNQkH_MwJtlXPa3BTxi2N9vbm6EkI",
   authDomain: "topfive-73afe.firebaseapp.com",
@@ -37,100 +66,72 @@ const firebaseConfig = {
   messagingSenderId: "639921758998",
   appId: "1:639921758998:web:459db23b535279bac76637"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-let empresas = [];
-let fotosTemp=[], ativa=null, estrela=0;
-const $=id=>document.getElementById(id);
-const SENHA_DONO='102030';
-
-function validarCNPJ(cnpj){cnpj=cnpj.replace(/[^\d]+/g,'');if(cnpj.length!=14)return false;if(/^(\d)\1{13}$/.test(cnpj))return false;let t=cnpj.length-2,d=cnpj.substring(t),d1=parseInt(d.charAt(0)),d2=parseInt(d.charAt(1)),calc=x=>{let n=cnpj.substring(0,x),y=0,pos=x-7;for(let i=x;i>=1;i--){y+=n.charAt(x-i)*pos--;if(pos<2)pos=9;}return(y%11<2)?0:11-(y%11);};return calc(t)==d1&&calc(t+1)==d2;}
-
-function comprimirImagem(base64){
-  return new Promise(res=>{
-    let img=new Image();
-    img.onload=()=>{
-      let canvas=document.createElement('canvas');
-      let max=600;
-      let w=img.width, h=img.height;
-      if(w>max){h=h*(max/w); w=max;}
-      if(h>max){w=w*(max/h); h=max;}
-      canvas.width=w; canvas.height=h;
-      canvas.getContext('2d').drawImage(img,0,0,w,h);
-      res(canvas.toDataURL('image/jpeg',0.6));
-    };
-    img.src=base64;
+let fotosBase64=[];
+function showTab(t){
+  document.getElementById('tab-empresas').style.display=t==='empresas'?'block':'none';
+  document.getElementById('tab-rank').style.display=t==='rank'?'block':'none';
+  document.getElementById('tab-cad').style.display=t==='cad'?'block':'none';
+  if(t==='empresas') carregar();
+  if(t==='rank') carregarRank();
+}
+window.showTab=showTab;
+function comprimir(file){
+  return new Promise((res)=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        const max=800; let w=img.width,h=img.height;
+        if(w>h){ if(w>max){ h*=max/w; w=max; } } else { if(h>max){ w*=max/h; h=max; } }
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        res(canvas.toDataURL('image/jpeg',0.6));
+      }; img.src=e.target.result;
+    }; r.readAsDataURL(file);
   });
 }
-
-$('c-cnpj').addEventListener('input',e=>{let v=e.target.value,m=$('cnpj-msg');if(v.length>10){if(validarCNPJ(v)){m.className='text-xs mt-1 text-green-600';m.innerText='✅ CNPJ válido';}else{m.className='text-xs mt-1 text-red-600';m.innerText='❌ CNPJ inválido';}m.classList.remove('hidden');}else m.classList.add('hidden');});
-
-$('c-fotos').addEventListener('change',async e=>{
-  fotosTemp=[]; $('preview').innerHTML=' Salvando preview...';
-  let files=[...e.target.files].slice(0,3);
-  for(let f of files){
-    let r=await new Promise(r2=>{let rd=new FileReader(); rd.onload=ev=>r2(ev.target.result); rd.readAsDataURL(f);});
-    let comprimida=await comprimirImagem(r);
-    fotosTemp.push(comprimida);
-  }
-  $('preview').innerHTML=fotosTemp.map(src=>`<img src="${src}" class="w-16 h-16 rounded-xl object-cover">`).join('');
+document.getElementById('fotos').addEventListener('change', async (e)=>{
+  fotosBase64=[]; const preview=document.getElementById('preview');
+  preview.innerHTML='Comprimindo...';
+  for(const f of e.target.files){ const b64=await comprimir(f); fotosBase64.push(b64); }
+  preview.innerHTML=fotosBase64.map(b=>`<img src="${b}" class="thumb">`).join('');
 });
-
-function show(id){['tela-inicio','tela-empresa','tela-admin','tela-rank'].forEach(t=>$(t).classList.add('hidden'));$(id).classList.remove('hidden');window.scrollTo(0,0);}
-window.irInicio=function(){show('tela-inicio');history.replaceState(null,'',location.pathname);renderInicio();}
-window.irRank=function(){show('tela-rank');renderRank();}
-window.abrirAdmin=function(){$('modal-senha').classList.remove('hidden');}
-window.checkSenha=function(){if($('senha').value===SENHA_DONO){$('modal-senha').classList.add('hidden');$('senha').value='';show('tela-admin');renderAdmin();}else alert('Senha incorreta!');}
-
-async function loadEmpresas(){
+async function carregar(){
+  const statusBox=document.getElementById('statusBox'); const listaEl=document.getElementById('lista');
+  statusBox.textContent='⏳ Conectando no topfive-73afe...'; listaEl.innerHTML='';
   try{
-    const snap = await getDocs(collection(db, "empresas"));
-    empresas = snap.docs.map(d=>({id:d.id,...d.data()}));
-    $('loading').innerText = empresas.length? `${empresas.length} empresas online` : 'Nenhuma empresa ainda';
-    renderInicio();
-    let params = new URLSearchParams(location.search);
-    let id = params.get('id');
-    if(id){
-      let emp = empresas.find(x=>x.id==id);
-      if(!emp){
-        const docRef = await getDoc(doc(db,"empresas",id));
-        if(docRef.exists()) mostrar({id:docRef.id,...docRef.data()});
-      } else mostrar(emp);
-    }
-  }catch(e){$('loading').innerText='Erro: '+e.message;}
+    const snap=await getDocs(collection(db,'empresas'));
+    if(snap.empty){ statusBox.textContent='✅ Conectado! Nenhuma empresa ainda. Cadastre a primeira!'; return; }
+    statusBox.textContent=`✅ ${snap.size} empresa(s)`;
+    const empresas=[]; snap.forEach(d=>empresas.push({id:d.id,...d.data()}));
+    empresas.sort((a,b)=>(a.nome||'').localeCompare(b.nome||''));
+    listaEl.innerHTML=empresas.map(emp=>`
+      <div class="card">
+        ${emp.fotos && emp.fotos[0]? `<img src="${emp.fotos[0]}" class="thumb" style="margin-bottom:10px">` : ''}
+        <h3>${emp.nome}</h3><span class="badge">${emp.cat||'Outros'}</span><p class="muted" style="margin-top:6px">${emp.desc||''}</p>
+      </div>`).join('');
+  }catch(err){ statusBox.innerHTML=`❌ Erro: ${err.message}`; }
 }
-
-window.cadastrar=async function(){
-  let nome=$('c-nome').value.trim(),cnpj=$('c-cnpj').value.trim(),cat=$('c-cat').value,tel=$('c-tel').value.trim(),email=$('c-email').value.trim(),desc=$('c-desc').value.trim();
-  if(!nome)return alert('Nome obrigatório');
-  if(!validarCNPJ(cnpj))return alert('CNPJ inválido!');
-  let cnpjLimpo=cnpj.replace(/\D/g,'');
-  if(empresas.some(e=>e.cnpj.replace(/\D/g,'')===cnpjLimpo)){return alert('❌ Esse CNPJ já foi cadastrado!');}
-  if(fotosTemp.length==0)return alert('Coloque 1 foto');
-  $('btn-cadastrar').innerText='Salvando online...'; $('btn-cadastrar').disabled=true;
+async function carregarRank(){
+  const rankEl=document.getElementById('rankLista'); rankEl.innerHTML='Carregando...';
+  const snap=await getDocs(collection(db,'empresas')); const porCat={};
+  snap.forEach(d=>{ const data=d.data(); const cat=data.cat||'Outros'; if(!porCat[cat]) porCat[cat]=[]; porCat[cat].push(data); });
+  rankEl.innerHTML=Object.keys(porCat).map(cat=>`<div class="card"><h3>${cat} (${porCat[cat].length})</h3>${porCat[cat].map(e=>`<p>• ${e.nome}</p>`).join('')}</div>`).join('') || 'Nenhuma empresa';
+}
+window.salvar=async()=>{
+  const senha=document.getElementById('senha').value; if(senha!=='102030'){ alert('Senha errada!'); return; }
+  const nome=document.getElementById('nome').value.trim(); if(!nome){ alert('Nome obrigatório'); return; }
+  const btn=document.getElementById('btnSalvar'); const st=document.getElementById('saveStatus');
+  btn.disabled=true; btn.textContent='Salvando...'; st.textContent='Enviando...';
   try{
-    const docRef = await addDoc(collection(db,"empresas"),{nome,cnpj,cat,tel,email,desc,fotos:fotosTemp,avs:[],criado:Date.now()});
-    let emp={id:docRef.id,nome,cnpj,cat,tel,email,desc,fotos:fotosTemp,avs:[]};
-    empresas.push(emp);
-    $('c-nome').value='';$('c-cnpj').value='';$('c-tel').value='';$('c-email').value='';$('c-desc').value='';$('preview').innerHTML='';fotosTemp=[];$('cnpj-msg').classList.add('hidden');
-    renderAdmin();renderInicio();
-    abrirQR(emp);
-  }catch(e){alert('Erro: '+e.message);}
-  $('btn-cadastrar').innerText='Cadastrar e Gerar QR'; $('btn-cadastrar').disabled=false;
-}
-
-window.abrirQR=function(emp){
-  $('qr-nome').innerText=emp.nome;
-  let qrDiv=$('qrcode');qrDiv.innerHTML='';
-  let link=location.origin+location.pathname+'?id='+emp.id;
-  $('qr-link').innerText=link;
-  new QRCode(qrDiv,{text:link,width:220,height:220,correctLevel:QRCode.CorrectLevel.H});
-  $('modal-qr').classList.remove('hidden');
-}
-window.abrirQRById=function(id){let e=empresas.find(x=>x.id==id);if(e)abrirQR(e);}
-
-function renderInicio(){$('lista').innerHTML=empresas.map(e=>{let media=e.avs.length?(e.avs.reduce((s,a)=>s+a.nota,0)/e.avs.length).toFixed(1):'Novo';return `<div class="bg-white p-4 rounded-2xl shadow-sm"><div class="h-36 bg-gray-100 rounded-xl bg-cover bg-center" style="background-image:url(${e.fotos[0]||''})"></div><b class="block mt-2">${e.nome}</b><p class="text-xs text-gray-500">${e.cnpj}</p><div class="flex justify-between items-center mt-1"><span class="text-xs bg-black text-white px-2 py-1 rounded-full">${e.cat}</span><span class="text-xs bg-yellow-100 px-2 py-1 rounded-full">⭐ ${media}</span></div><button onclick="ver('${e.id}')" class="w-full mt-3 bg-black text-white py-2 rounded-full text-sm font-bold">Ver página</button></div>`;}).join('')||'<p class="text-center text-gray-400 py-8">Nenhuma empresa ainda</p>';}
-window.ver=function(id){let emp=empresas.find(x=>x.id==id);if(emp)mostrar(emp);}
-window.mostrar=function(emp){ativa=emp;$('e-nome').innerText=emp.nome;$('e-cnpj').innerText='CNPJ: '+emp.cnpj;$('e-cat').innerText=emp.cat;$('e-tel').innerText=emp.tel? '📱 '+emp.tel : '';$('e-email').innerText=emp.email? '✉️ '+emp.email : '';$('e-desc').innerText=emp.desc||'';$('e-foto').style.backgroundImage=emp.fotos[0]?`url(${emp.fotos[0]})`:'';$('e-fotos').innerHTML=emp.fotos.map(f=>`<img src="${f}" class="w-full h-24 object-cover rounded-xl">`).join('');let media=emp.avs.length?(emp.avs.reduce((s,a)=>s+a.nota,0)/emp.avs.length).toFixed(1):'0.0';$('e-media').innerText='⭐ '+media+'
+    await addDoc(collection(db,'empresas'),{nome,cnpj:document.getElementById('cnpj').value,email:document.getElementById('email').value,whats:document.getElementById('whats').value,cat:document.getElementById('cat').value||'Outros',desc:document.getElementById('desc').value,fotos:fotosBase64.slice(0,4),criado:Date.now()});
+    st.textContent='✅ Salvo!'; setTimeout(()=>{ showTab('empresas'); btn.disabled=false; btn.textContent='Salvar empresa'; },1200);
+  }catch(e){ st.textContent='❌ '+e.message; btn.disabled=false; }
+};
+carregar();
+</script>
+</body>
+</html>

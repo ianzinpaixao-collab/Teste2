@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top Cinco - Itapecuru</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
+body{background:#f5f5f7;color:#111}
+header{background:#0f0f0f;color:#fff;padding:14px 18px;display:flex;gap:10px;align-items:center;position:sticky;top:0;z-index:20;flex-wrap:wrap}
+.logo{font-weight:900;font-size:22px;margin-right:10px}
+.logo span{color:#f7c600}
+.btn{border:0;padding:10px 16px;border-radius:999px;font-weight:700;cursor:pointer;font-size:14px}
+.btn-dark{background:#2a2a2a;color:#fff}
+.btn-yellow{background:#f7c600;color:#111}
+.btn-blue{background:#2b7bff;color:#fff}
+.btn-green{background:#00c851;color:#fff}
+main{padding:18px;max-width:950px;margin:auto}
+.card{background:#fff;border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.muted{color:#666;font-size:14px}
+input,select,textarea{width:100%;padding:13px;border-radius:12px;border:1px solid #ddd;margin-top:6px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+img.thumb{width:100%;height:180px;object-fit:cover;border-radius:12px}
+.badge{display:inline-block;background:#f0f0f0;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600}
+.stars{color:#f7c600;font-size:20px}
+.star-input{font-size:32px;cursor:pointer;color:#ddd}
+.star-input.active{color:#f7c600}
+#statusBox{background:#fff;border-radius:12px;padding:14px;margin-bottom:14px;border:1px dashed #ccc}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center;padding:16px}
+.modalBox{background:#fff;border-radius:18px;padding:20px;max-width:420px;width:100%;max-height:90vh;overflow:auto}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<header>
+<div class="logo">Top<span>Cinco</span></div>
+<button class="btn btn-dark" onclick="showTab('empresas')">Empresas</button>
+<button class="btn btn-yellow" onclick="showTab('rank')">🏆 Ranking</button>
+<button class="btn btn-blue" onclick="showTab('cad')">🔒 Cadastrar</button>
+</header>
+<main>
+<div id="tab-empresas"><div id="statusBox">⏳ Carregando...</div><div id="lista"></div></div>
+<div id="tab-rank" style="display:none"><h2>🏆 Ranking</h2><div id="rankLista"></div></div>
+<div id="tab-cad" style="display:none"><div class="card"><h3>🔒 Área Admin</h3><input id="senha" type="password" placeholder="Senha de administrador"><input id="nome" placeholder="Nome da empresa *"><input id="cnpj" placeholder="CNPJ"><input id="email" placeholder="E-mail"><input id="whats" placeholder="WhatsApp"><select id="cat"><option value="">Categoria *</option><option>Venda de Serviços</option><option>Alimentação</option><option>Saúde</option><option>Beleza</option><option>Educação</option><option>Varejo</option><option>Outros</option></select><textarea id="desc" placeholder="Descrição"></textarea><input id="fotos" type="file" multiple accept="image/*"><div id="preview" class="grid"></div><button class="btn btn-blue" id="btnSalvar" onclick="salvar()" style="width:100%;margin-top:12px">Salvar empresa</button><p id="saveStatus" class="muted"></p></div></div>
+<div id="modalAvaliar" class="modal" onclick="if(event.target==this) fecharAvaliar()"><div class="modalBox"><h3 id="avNome">Avaliar</h3><div style="text-align:center;margin:12px 0"><span class="star-input" onclick="setNota(1)">★</span><span class="star-input" onclick="setNota(2)">★</span><span class="star-input" onclick="setNota(3)">★</span><span class="star-input" onclick="setNota(4)">★</span><span class="star-input" onclick="setNota(5)">★</span></div><input id="avQuem" placeholder="Seu nome"><textarea id="avComent" placeholder="Comentário"></textarea><button class="btn btn-green" onclick="enviarAvaliacao()" style="width:100%">Enviar avaliação</button><button class="btn btn-dark" onclick="fecharAvaliar()" style="width:100%;margin-top:8px">Cancelar</button><div id="listaAv" style="margin-top:18px"></div><p id="avStatus" class="muted"></p></div></div>
+<div id="qrModal" class="modal" onclick="if(event.target==this) fecharQR()"><div class="modalBox" style="text-align:center"><h3 id="qrNome"></h3><div id="qrcode" style="display:flex;justify-content:center;margin:16px 0"></div><p id="qrLink" class="muted" style="font-size:11px;word-break:break-all"></p><button class="btn btn-dark" onclick="fecharQR()" style="width:100%;margin-top:10px">Fechar</button><button class="btn btn-blue" onclick="baixarQR()" style="width:100%;margin-top:8px">⬇️ Baixar QR</button></div></div>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAxAzMNQkH_MwJtlXPa3BTxi2N9vbm6EkI",
+  authDomain: "topfive-73afe.firebaseapp.com",
+  projectId: "topfive-73afe",
+  storageBucket: "topfive-73afe.firebasestorage.app",
+  messagingSenderId: "639921758998",
+  appId: "1:639921758998:web:459db23b535279bac76637"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+let fotosBase64=[]; let empresasCache=[]; let empresaAtiva=null; let notaAtual=0;
+window.showTab=(t)=>{document.getElementById('tab-empresas').style.display=t==='empresas'?'block':'none';document.getElementById('tab-rank').style.display=t==='rank'?'block':'none';document.getElementById('tab-cad').style.display=t==='cad'?'block':'none';if(t==='empresas') carregar();if(t==='rank') carregarRank();}
+function comprimir(f){return new Promise(r=>{const fr=new FileReader();fr.onload=e=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');let w=im.width,h=im.height;const m=800;if(w>h){if(w>m){h*=m/w;w=m}}else if(h>m){w*=m/h;h=m}c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);r(c.toDataURL('image/jpeg',0.6))};im.src=e.target.result};fr.readAsDataURL(f)})}
+document.getElementById('fotos').addEventListener('change', async e=>{fotosBase64=[];const p=document.getElementById('preview');p.innerHTML='Comprimindo...';for(const f of e.target.files)fotosBase64.push(await comprimir(f));p.innerHTML=fotosBase64.map(b=>`<img src="${b}" class="thumb">`).join('')});
+function renderStars(m){const n=Math.round(m||0);return '★'.repeat(n)+'☆'.repeat(5-n);}
+async function carregar(){const sb=document.getElementById('statusBox');const li=document.getElementById('lista');sb.textContent='⏳ Carregando...';try{let snapE=await getDocs(collection(db,'empresas'));let medias={},counts={};try{let snapA=await getDocs(collection(db,'avaliacoes'));snapA.forEach(d=>{const a=d.data();if(!medias[a.empresaId]){medias[a.empresaId]=0;counts[a.empresaId]=0}medias[a.empresaId]+=a.nota;counts[a.empresaId]++});Object.keys(medias).forEach(k=>medias[k]/=counts[k])}catch(e){}if(snapE.empty){sb.textContent='✅ Nenhuma empresa. Vá em Cadastrar';li.innerHTML='';empresasCache=[];return}sb.textContent=`✅ ${snapE.size} empresa(s)`;empresasCache=[];snapE.forEach(d=>empresasCache.push({id:d.id,...d.data()}));empresasCache.sort((a,b)=>(medias[b.id]||0)-(medias[a.id]||0));li.innerHTML=empresasCache.map(emp=>{const md=medias[emp.id]||0;const qt=counts[emp.id]||0;const sn=(emp.nome||'').replace(/'/g,"\\'");return `<div class="card">${emp.fotos?.[0]?`<img src="${emp.fotos[0]}" class="thumb" style="margin-bottom:10px">`:''}<h3>${emp.nome}</h3><div style="margin:6px 0"><span class="badge">${emp.cat||'Outros'}</span> <span class="stars">${renderStars(md)}</span> <span class="muted">${md?md.toFixed(1):'0.0'} (${qt})</span></div><p class="muted">${emp.desc||''}</p><div class="grid" style="margin-top:12px"><button class="btn btn-green" onclick="abrirAvaliar('${emp.id}','${sn}')">⭐ Avaliar</button><button class="btn btn-yellow" onclick="gerarQR('${emp.id}','${sn}')">📱 QR Code</button></div></div>`}).join('');const hid=location.hash.replace('#','');if(hid){const e=empresasCache.find(x=>x.id===hid);if(e) abrirAvaliar(e.id,e.nome)}}catch(e){sb.textContent='❌ Erro: '+e.message}}
+async function carregarRank(){const r=document.getElementById('rankLista');r.innerHTML='Carregando...';try{const se=await getDocs(collection(db,'empresas'));let medias={},counts={};try{const sa=await getDocs(collection(db,'avaliacoes'));sa.forEach(d=>{const a=d.data();if(!medias[a.empresaId]){medias[a.empresaId]=0;counts[a.empresaId]=0}medias[a.empresaId]+=a.nota;counts[a.empresaId]++});Object.keys(medias).forEach(k=>medias[k]/=counts[k])}catch(e){}if(se.empty){r.innerHTML='Nenhuma empresa';return}const lista=[];se.forEach(doc=>{const emp=doc.data();lista.push({id:doc.id,nome:emp.nome,cat:emp.cat||'Outros',media:medias[doc.id]||0,qtd:counts[doc.id]||0})});lista.sort((a,b)=>b.media-a.media);const porCat={};lista.forEach(l=>{if(!porCat[l.cat])porCat[l.cat]=[];porCat[l.cat].push(l)});r.innerHTML=Object.keys(porCat).map(cat=>`<div class="card"><h3>${cat}</h3>${porCat[cat].map((e,i)=>`<p style="margin-top:8px">${i+1}º ${e.nome} - <span class="stars">${renderStars(e.media)}</span> ${e.media.toFixed(1)} (${e.qtd})</p>`).join('')}</div>`).join('')}catch(e){r.innerHTML='❌ '+e.message}}
+window.setNota=n=>{notaAtual=n;document.querySelectorAll('.star-input').forEach((el,i)=>el.classList.toggle('active',i<n))}
+window.abrirAvaliar=async(id,nome)=>{empresaAtiva=id;document.getElementById('avNome').textContent='Avaliar: '+nome;document.getElementById('modalAvaliar').style.display='flex';notaAtual=0;setNota(0);document.getElementById('avQuem').value='';document.getElementById('avComent').value='';document.getElementById('avStatus').textContent='';const la=document.getElementById('listaAv');la.innerHTML='Carregando...';try{const q=query(collection(db,'avaliacoes'),where('empresaId','==',id));const s=await getDocs(q);if(s.empty){la.innerHTML='<p class="muted">Nenhuma avaliação ainda</p>';return}const avs=[];s.forEach(d=>avs.push(d.data()));avs.sort((a,b)=>b.criado-a.criado);la.innerHTML='<h4>Avaliações:</h4>'+avs.map(a=>`<div style="border-top:1px solid #eee;padding:10px 0"><span class="stars">${renderStars(a.nota)}</span> <b>${a.nome}</b><p class="muted">${a.comentario||''}</p></div>`).join('')}catch(e){la.textContent='Erro: '+e.message}}
+window.fecharAvaliar=()=>document.getElementById('modalAvaliar').style.display='none';
+window.enviarAvaliacao=async()=>{if(!notaAtual){alert('Escolha estrelas');return}const st=document.getElementById('avStatus');st.textContent='Enviando...';try{await addDoc(collection(db,'avaliacoes'),{empresaId:empresaAtiva,nome:document.getElementById('avQuem').value||'Anônimo',nota:notaAtual,comentario:document.getElementById('avComent').value,criado:Date.now()});st.textContent='✅ Enviado!';setTimeout(()=>{fecharAvaliar();carregar()},1000)}catch(e){st.textContent='❌ '+e.message}}
+window.gerarQR=(id,nome)=>{document.getElementById('qrNome').textContent=nome;const link=`https://ianzinpaixao-collab.github.io/Teste2/#${id}`;document.getElementById('qrLink').textContent=link;const b=document.getElementById('qrcode');b.innerHTML='';new QRCode(b,{text:link,width:220,height:220});document.getElementById('qrModal').style.display='flex'}
+window.fecharQR=()=>document.getElementById('qrModal').style.display='none';
+window.baixarQR=()=>{const c=document.querySelector('#qrcode canvas');if(c){const a=document.createElement('a');a.href=c.toDataURL();a.download='qrcode.png';a.click()}}
+window.salvar=async()=>{if(document.getElementById('senha').value!=='102030'){alert('Senha incorreta');return}const nome=document.getElementById('nome').value.trim();if(!nome){alert('Nome obrigatório');return}const btn=document.getElementById('btnSalvar');const st=document.getElementById('saveStatus');btn.disabled=true;btn.textContent='Salvando...';st.textContent='Enviando...';try{await addDoc(collection(db,'empresas'),{nome,cnpj:document.getElementById('cnpj').value,email:document.getElementById('email').value,whats:document.getElementById('whats').value,cat:document.getElementById('cat').value||'Outros',desc:document.getElementById('desc').value,fotos:fotosBase64.slice(0,4),criado:Date.now()});st.textContent='✅ Salvo!';setTimeout(()=>{showTab('empresas');btn.disabled=false;btn.textContent='Salvar empresa';},1200)}catch(e){st.textContent='❌ '+e.message;btn.disabled=false}}
+carregar();
+</script>
+</body>
+</html>
